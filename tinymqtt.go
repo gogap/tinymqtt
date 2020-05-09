@@ -202,10 +202,14 @@ func calcAliyunSignature(accessKeyID, accessKeySecret, instanceID, groupID, devi
 
 func (p *MQTTClient) Start() (err error) {
 
+	logrus.Debugln("MQTTClient begin to connect to server")
+
 	if token := p.client.Connect(); token.Wait() && token.Error() != nil {
 		err = token.Error()
 		return
 	}
+
+	logrus.Debugln("MQTTClient client started()")
 
 	for i := 0; i < len(p.subscribes); i++ {
 		if token := p.client.Subscribe(p.subscribes[i].Topic, p.subscribes[i].Qos, p.subscribes[i].Handler); token.Wait() && token.Error() != nil {
@@ -213,6 +217,8 @@ func (p *MQTTClient) Start() (err error) {
 			return
 		}
 	}
+
+	logrus.Debugln("MQTTClient client subscribed successful")
 
 	return
 }
