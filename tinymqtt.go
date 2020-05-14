@@ -50,6 +50,7 @@ func NewMQTTClient(conf config.Configuration, subscribes ...SubscribeOption) (re
 	keepAlive := clientConf.GetTimeDuration("keep-alive")
 	pingTimeout := clientConf.GetTimeDuration("ping-timeout")
 	cleanSession := clientConf.GetBoolean("clean-session")
+	orderMatters := clientConf.GetBoolean("order_matters", true)
 	quiesce := uint(clientConf.GetInt32("quiesce"))
 	if quiesce == 0 {
 		quiesce = 250 //ms
@@ -123,6 +124,8 @@ func NewMQTTClient(conf config.Configuration, subscribes ...SubscribeOption) (re
 		opts.SetStore(mqttStore)
 	}
 
+	autoReconnect := clientConf.GetBoolean("auto-reconnect", true)
+
 	opts.AddBroker(brokerServer)
 	opts.SetClientID(clientID)
 	opts.SetUsername(username)
@@ -130,6 +133,8 @@ func NewMQTTClient(conf config.Configuration, subscribes ...SubscribeOption) (re
 	opts.SetCleanSession(cleanSession)
 	opts.SetKeepAlive(keepAlive)
 	opts.SetPingTimeout(pingTimeout)
+	opts.SetAutoReconnect(autoReconnect)
+	opts.SetOrderMatters(orderMatters)
 
 	client := mqtt.NewClient(opts)
 
