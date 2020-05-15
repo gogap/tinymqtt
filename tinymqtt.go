@@ -33,11 +33,49 @@ type MQTTClient struct {
 	subscribes []SubscribeOption
 }
 
+type LogrusLogger struct {
+	level logrus.Level
+}
+
+func (p *LogrusLogger) Println(v ...interface{}) {
+	switch p.level {
+	case logrus.DebugLevel:
+		{
+			logrus.Debugln(v...)
+		}
+	case logrus.ErrorLevel, logrus.PanicLevel:
+		{
+			logrus.Errorln(v...)
+		}
+	case logrus.WarnLevel:
+		{
+			logrus.Warnln(v...)
+		}
+	}
+}
+
+func (p *LogrusLogger) Printf(format string, v ...interface{}) {
+	switch p.level {
+	case logrus.DebugLevel:
+		{
+			logrus.Printf(format, v...)
+		}
+	case logrus.ErrorLevel, logrus.PanicLevel:
+		{
+			logrus.Printf(format, v...)
+		}
+	case logrus.WarnLevel:
+		{
+			logrus.Printf(format, v...)
+		}
+	}
+}
+
 func init() {
-	mqtt.DEBUG = logrus.StandardLogger()
-	mqtt.CRITICAL = logrus.StandardLogger()
-	mqtt.WARN = logrus.StandardLogger()
-	mqtt.DEBUG = logrus.StandardLogger()
+	mqtt.DEBUG = &LogrusLogger{logrus.DebugLevel}
+	mqtt.CRITICAL = &LogrusLogger{logrus.PanicLevel}
+	mqtt.WARN = &LogrusLogger{logrus.WarnLevel}
+	mqtt.ERROR = &LogrusLogger{logrus.ErrorLevel}
 }
 
 func NewMQTTClient(conf config.Configuration, subscribes ...SubscribeOption) (ret *MQTTClient, err error) {
