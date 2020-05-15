@@ -33,6 +33,13 @@ type MQTTClient struct {
 	subscribes []SubscribeOption
 }
 
+func init() {
+	mqtt.DEBUG = logrus.StandardLogger()
+	mqtt.CRITICAL = logrus.StandardLogger()
+	mqtt.WARN = logrus.StandardLogger()
+	mqtt.DEBUG = logrus.StandardLogger()
+}
+
 func NewMQTTClient(conf config.Configuration, subscribes ...SubscribeOption) (ret *MQTTClient, err error) {
 
 	for i := 0; i < len(subscribes); i++ {
